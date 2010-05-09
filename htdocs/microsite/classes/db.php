@@ -32,7 +32,7 @@ class DB extends PDO
 			$this->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 		}
 		catch (PDOException $e) {
-			echo 'Connection failed: ' . $e->getMessage();
+			throw new Exception('Connection to "' . $connect_string . '" failed: ' . $e->getMessage() );
 		}
 
 		DB::set($this, $index);

@@ -2,20 +2,23 @@
 
 function __autoload($class_name) {
 	static $files = null;
+	static $loaded = false;
 
 	$success = false;
 	$class_file = strtolower($class_name) . '.php';
 
-	if ( empty($files) ) {
+	if ( !$loaded ) {
 		$files = array();
-
-		$glob = glob( MICROSITE_PATH . '/microsite/classes/*.php' );
-		$fnames = array_map(create_function('$a', 'return strtolower(basename($a));'), $glob);
-		$files = array_merge($files, array_combine($fnames, $glob));
-
-		$glob = glob( MICROSITE_PATH . '/microsite/controllers/*.php' );
-		$fnames = array_map(create_function('$a', 'return strtolower(basename($a, ".php") . "controller.php");'), $glob);
-		$files = array_merge($files, array_combine($fnames, $glob));
+		$classdirs = Config::get('Paths/classes', array());
+		$classdirs = array_merge(array(MICROSITE_PATH . '/microsite/classes'), $classdirs);
+		foreach($classdirs as $dir) {
+			$glob = glob( $dir . '/*.php' );
+			if(count($glob) > 0) {
+				$fnames = array_map(create_function('$a', 'return strtolower(basename($a));'), $glob);
+				$files = array_merge($files, array_combine($fnames, $glob));
+			}
+		}
+		$loaded = true;
 	}
 
 	// Search in the available files for the undefined class file.
@@ -32,6 +35,8 @@ function __autoload($class_name) {
 		var_dump($files);
 	}
 }
+
+include MICROSITE_PATH . '/microsite/classes/config.php';
 
 spl_autoload_register('__autoload');
 	
