@@ -67,9 +67,14 @@ class Auth
 	function required() 
 	{
 		if(!Auth::loggedin()) {
-			header('location: ' . Config::get('auth_path', '/auth') . '?path=' . Application::$fullpath);
+			header('location: ' . Config::get('Auth/path', '/auth') . '?path=' . Application::$fullpath);
 			exit;
 		}
+	}
+	
+	function add_user($user, $pass)
+	{
+		DB::get()->query('INSERT INTO users (username, password) VALUES (:username, :password)', array('username'=>$user, 'password'=>md5($pass)));
 	}
 }
 

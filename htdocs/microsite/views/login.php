@@ -1,16 +1,7 @@
-<!DOCTYPE html>
-<html id="loginpage">
-  <head>
-	  <title>Login</title>
-		<style type="text/css">
-		@import url(/css/microsite.css);
-		</style>
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
-  </head>
-  <body>
-
-<?php echo $content; ?>
-
-  </body>
-</html>
+<form id="loginform" method="post" action="/auth/login">
+	<label id="user" for="iuser">Username:</label>
+	<input id="iuser" type="text" name="user">
+	<label id="pass" for="ipass">Password:</label>
+	<input id="ipass" type="password" name="pass">
+	<input id="log_in" type="submit" value="Log In">
+</form>

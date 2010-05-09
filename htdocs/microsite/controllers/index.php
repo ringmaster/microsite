@@ -5,7 +5,7 @@ class IndexController
 
 	function __construct($path)
 	{
-		$this->db = new DB(Config::get('connect_string'));
+		$this->db = new DB(Config::get('Database/connect_string'));
 		// Auth::required();
 	}
 
@@ -60,7 +60,7 @@ class IndexController
 					}
 				}
 
-				$v->render($view);
+				var_dump( $v->render($view) );
 				break;
 		}
 	}

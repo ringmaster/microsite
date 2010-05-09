@@ -23,21 +23,21 @@ class Application
 		}
 
 		// Am I logged in?
-		if(Config::get('auth_required', false) && !in_array(self::$fullpath, Config::get('auth_skip_controller', array()))) {
+		if(Config::get('Auth/required', false) && !in_array(self::$fullpath, Config::get('Auth/skip_controller', array()))) {
 			Auth::required();
 		}
 
 		if(!isset($controllers[$controller])) {
-			$controller = Config::get('controller_default', 'index');
+			$controller = Config::get('Controllers/controller_default', 'index');
 		}
 		if(isset($controllers[$controller])) {
 			include $controllers[$controller];
 			$class = $controller . 'Controller';
 			$obj = new $class(self::$path);
+			$method = self::$path[1];
 			if(isset(self::$path[1])) {
-				if(self::$path[1][0] != '_' && ($obj instanceof AjaxController || method_exists($obj, self::$path[1]))) {
+				if(self::$path[1][0] != '_' && method_exists($obj, $method)) {
 					$args = array_slice(self::$path, 2);
-					$method = self::$path[1];
 					$obj->$method($args);
 				}
 				else {

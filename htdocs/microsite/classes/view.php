@@ -4,9 +4,12 @@ class View
 {
 	private $vars = array();
 	
-	public function __construct($vars)
+	public function __construct($vars, $template = null)
 	{
 		$this->vars = $vars;
+		if(isset($template)) {
+			$this->render($emplate);
+		}
 	}
 	
 	public function __get($name)
@@ -17,6 +20,12 @@ class View
 	public function __set($name, $value)
 	{
 		$this->vars[$name] = $value;
+	}
+	
+	public static function fragment($fragment)
+	{
+		$view = new Dom($fragment);
+		return $view;
 	}
 	
 	public function render($viewname = '')
@@ -41,18 +50,15 @@ class View
 				if($k[0] != '_') $$k = $v;
 			}
 			$view = $this;
+			ob_start();
 			include $views[$viewname];
+			$out = ob_get_clean();
+			$out = new Dom($out);
+			return $out;
 		}
 		else {
-			echo 'View does not exist: ' . $viewname;
+			throw(new Exception('View does not exist: ' . $viewname));
 		}
-	}
-	
-	public function capture($viewname = '')
-	{
-		ob_start();
-		$this->render($viewname);
-		return ob_get_clean();
 	}
 }
 

@@ -8,12 +8,13 @@ class AuthController
 	
 	function index($params){
 		$components = array(
-			'content'=>'<form id="loginform" method="post" action="/auth/login"><label id="user" for="iuser">Username:</label><input id="iuser" type="text" name="user"><label id="pass" for="ipass">Password:</label><input id="ipass" type="password" name="pass"><input id="log_in" type="submit" value="Log In"></form>',
+			'content'=>View::fragment('<form id="loginform" method="post" action="/auth/login"><label id="user" for="iuser">Username:</label><input id="iuser" type="text" name="user"><label id="pass" for="ipass">Password:</label><input id="ipass" type="password" name="pass"><input id="log_in" type="submit" value="Log In"></form>'),
+			'page_id'=>'loginpage',
 		);
-				
 		$v = new View($components);
 		
-		$v->render('login');
+		$out = $v->render('template');
+		echo $out;
 	}
 	
 	function login(){
@@ -22,24 +23,24 @@ class AuthController
 		
 		if(Auth::authorize($user, $pass)) {
 			header('location: /');
-			$content = '<div id="login">Success</div><script type="text/javascript">location.href="/";</script>';
+			$content = View::fragment('<div id="login">Success</div><script type="text/javascript">location.href="/";</script>');
 			die();
 		}
 		else {
-			if(DB::get()->val("SELECT value FROM options WHERE name = 'Open Registration' AND grouping = 'Registration';")) {
-				DB::get()->query('INSERT INTO users (username, password) VALUES (:username, :password)', array('username'=>$user, 'password'=>md5($pass)));
+			if(Config::get('open', false)) {
+				Auth::add_user($user, $pass);
 				Auth::authorize($user, $pass);
 				header('location: /');
-				$content = '<div id="login">Success</div><script type="text/javascript">location.href="/";</script>';
+				$content = View::fragment('<div id="login">Success</div><script type="text/javascript">location.href="/";</script>');
 				die();
 			}
 			else {
-				header('location: /auth');
+				header('location: ' . Config::get('Auth/path', '/auth') . (isset($_GET['path']) ? '?path=' . $_GET['path'] : ''));
 			}
 		}
-		$v = new View(array('content'=>$content));
+		$v = new View(array('content'=>$content, 'page_id'=>'loginpage'));
 		
-		$v->render('login');
+		echo $v->render('template');
 	}
 	
 	function logout(){

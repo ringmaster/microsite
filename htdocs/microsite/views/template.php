@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html id="<?php echo $page_id; ?>">
   <head>
 	  <title><?php echo $title; ?></title>
 		<style type="text/css">
