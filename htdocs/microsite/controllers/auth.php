@@ -17,7 +17,7 @@ class AuthController
 		echo $out;
 	}
 	
-	function login(){
+	function login_post(){
 		$user = $_POST['user'];
 		$pass = $_POST['pass'];
 		
@@ -36,6 +36,7 @@ class AuthController
 			}
 			else {
 				header('location: ' . Config::get('Auth/path', '/auth') . (isset($_GET['path']) ? '?path=' . $_GET['path'] : ''));
+				die();
 			}
 		}
 		$v = new View(array('content'=>$content, 'page_id'=>'loginpage'));

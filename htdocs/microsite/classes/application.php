@@ -34,27 +34,35 @@ class Application
 			include $controllers[$controller];
 			$class = $controller . 'Controller';
 			$obj = new $class(self::$path);
-			$method = self::$path[1];
+			$method = 'index';
 			if(isset(self::$path[1])) {
+				$method = self::$path[1];
 				if(self::$path[1][0] != '_' && method_exists($obj, $method)) {
 					$args = array_slice(self::$path, 2);
-					$obj->$method($args);
 				}
 				else {
 					if(method_exists($obj, 'index')) {
+						$method = 'index';
 						$args = array_slice(self::$path, 1);
-						$obj->index($args);
+					}
+					else {
+						throw new Exception('Controller "' . $controller . '" index method does not exist');
 					}
 				}
 			}
 			else{
-				if(method_exists($obj, 'index')) {
-					$obj->index(self::$path);
+				if(method_exists($obj, $method)) {
+					$args = self::$path;
 				}
 			}
+			$request_method = strtolower($_SERVER['REQUEST_METHOD']);
+			if(method_exists($obj, $method . '_' . $request_method)) {
+				$method .= '_' . $request_method;
+			}
+			$obj->$method($args);
 		}
 		else {
-			print_r(self::$path);
+			throw new Exception('Controller "' . $controller . '" does not exist.');
 		}
 	}
 

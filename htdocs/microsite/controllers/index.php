@@ -60,7 +60,7 @@ class IndexController
 					}
 				}
 
-				var_dump( $v->render($view) );
+				echo $v->render($view);
 				break;
 		}
 	}
